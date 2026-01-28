@@ -19,12 +19,10 @@ local function BookingListComponent(props)
 
 	local bookingList = {}
 	if #bookings > 0 then
-		table.insert(bookingList, Separator())
 		table.insert(
 			bookingList,
 			Header({ content = "  📋 MY BOOKINGS" })
 		)
-		table.insert(bookingList, Separator())
 		table.insert(bookingList, Paragraph({ content = "" }))
 		for _, b in ipairs(bookings) do
 			-- Booking ID

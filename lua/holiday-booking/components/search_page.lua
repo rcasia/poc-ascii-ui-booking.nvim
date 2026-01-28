@@ -1,42 +1,36 @@
---- UI module for holiday booking interface
---- @class holiday-booking.UI
-local UI = {}
+--- Search page component
+--- @class holiday-booking.components.SearchPage
 
 local ui = require("ascii-ui")
 local Paragraph = ui.components.Paragraph
 local Button = ui.components.Button
-local useState = ui.hooks.useState
 local Header = require("holiday-booking.components.header")
 local Label = require("holiday-booking.components.label")
 local InputField = require("holiday-booking.components.input_field")
-
-local booking = require("holiday-booking.booking")
-local BookingList = require("holiday-booking.components.booking_list")
 local OfferList = require("holiday-booking.components.offer_list")
 local OfferSort = require("holiday-booking.components.offer_sort")
 local useOffersSearch = require("holiday-booking.hooks.use_offers_search")
 
---- Main holiday booking app component
+--- Search page component function
+--- @param props { onNavigate: fun(page: string), onBookingCreated: fun() }
 --- @return table
-local function HolidayBookingApp()
-	local startDate, setStartDate = useState("2025-06-01")
-	local endDate, setEndDate = useState("2025-06-15")
-	local description, setDescription = useState("")
-	local bookings, setBookings = useState(booking.list())
+local function SearchPageComponent(props)
+	props = props or {}
+	local onNavigate = props.onNavigate or function() end
+	local onBookingCreated = props.onBookingCreated or function() end
+
+	local startDate, setStartDate = ui.hooks.useState("2025-06-01")
+	local endDate, setEndDate = ui.hooks.useState("2025-06-15")
+	local description, setDescription = ui.hooks.useState("")
 	local searchResults, isSearching, searchOffers, clearSearchResults = useOffersSearch()
-	local sortOrder, setSortOrder = useState("Price: Low to High")
+	local sortOrder, setSortOrder = ui.hooks.useState("Price: Low to High")
+	local booking = require("holiday-booking.booking")
 
 	local function handleSelectOffer(offer)
 		booking.create(offer.start_date, offer.end_date, offer.destination .. " - " .. offer.description)
-		setBookings(booking.list())
 		clearSearchResults()
+		onBookingCreated()
 		vim.notify(string.format("Booking created for %s (€%d)", offer.destination, offer.price), vim.log.levels.INFO)
-	end
-
-	local function handleDeleteBooking(id)
-		booking.delete(id)
-		setBookings(booking.list())
-		vim.notify("Booking deleted", vim.log.levels.INFO)
 	end
 
 	-- Sort offers based on current sort order
@@ -56,7 +50,16 @@ local function HolidayBookingApp()
 
 	return {
 		-- Header
-		Header({ content = "  ✈️  HOLIDAY BOOKING  ✈️" }),
+		Header({ content = "  🔍 Search Offers  🔍" }),
+		Paragraph({ content = "" }),
+
+		-- Navigation button
+		Button({
+			label = "[ 🏠 Home ]",
+			on_press = function()
+				onNavigate("welcome")
+			end,
+		}),
 		Paragraph({ content = "" }),
 
 		-- Form fields
@@ -97,19 +100,10 @@ local function HolidayBookingApp()
 			onSelect = handleSelectOffer,
 		}),
 		Paragraph({ content = "" }),
-
-		-- Booking list
-		BookingList({
-			bookings = bookings,
-			onDelete = handleDeleteBooking,
-		}),
 	}
 end
 
---- Open the holiday booking interface
-function UI.open()
-	local App = ui.createComponent("HolidayBookingApp", HolidayBookingApp)
-	ui.mount(App)
-end
-
-return UI
+return ui.createComponent("SearchPage", SearchPageComponent, {
+	onNavigate = "function",
+	onBookingCreated = "function",
+})
