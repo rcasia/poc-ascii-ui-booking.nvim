@@ -3,7 +3,11 @@
 local ui = require("ascii-ui")
 local Paragraph = ui.components.Paragraph
 local Button = ui.components.Button
-local Segment = require("ascii-ui.buffer.segment")
+local Separator = require("holiday-booking.components.separator")
+local Header = require("holiday-booking.components.header")
+local Label = require("holiday-booking.components.label")
+local Text = require("holiday-booking.components.text")
+local StatusMessage = require("holiday-booking.components.status_message")
 
 --- Booking list component function
 --- @param props { bookings: table[], onDelete: fun(id: number) }
@@ -15,56 +19,35 @@ local function BookingListComponent(props)
 
 	local bookingList = {}
 	if #bookings > 0 then
+		table.insert(bookingList, Separator())
 		table.insert(
 			bookingList,
-			Segment:new({
-				content = "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
-				color = { fg = "#4ECDC4" },
-			}):wrap()
+			Header({ content = "  📋 MY BOOKINGS" })
 		)
-		table.insert(
-			bookingList,
-			Segment:new({
-				content = "  📋 MY BOOKINGS",
-				color = { fg = "#FFD700" },
-			}):wrap()
-		)
-		table.insert(
-			bookingList,
-			Segment:new({
-				content = "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
-				color = { fg = "#4ECDC4" },
-			}):wrap()
-		)
+		table.insert(bookingList, Separator())
 		table.insert(bookingList, Paragraph({ content = "" }))
 		for _, b in ipairs(bookings) do
 			-- Booking ID
 			table.insert(
 				bookingList,
-				Segment:new({
-					content = string.format("🆔 ID: %d", b.id),
-					color = { fg = "#87CEEB" },
-				}):wrap()
+				Label({ content = string.format("🆔 ID: %d", b.id) })
 			)
 
 			-- Dates
 			local datesText = string.format("📅 %s → %s", b.start_date, b.end_date)
 			table.insert(
 				bookingList,
-				Segment:new({
+				Text({
 					content = datesText,
 					color = { fg = "#DDA0DD" },
-				}):wrap()
+				})
 			)
 
 			-- Description
 			local descText = b.description ~= "" and b.description or "(no description)"
 			table.insert(
 				bookingList,
-				Segment:new({
-					content = "📝 " .. descText,
-					color = { fg = "#E0E0E0" },
-				}):wrap()
+				Text({ content = "📝 " .. descText })
 			)
 
 			-- Delete button
@@ -82,10 +65,10 @@ local function BookingListComponent(props)
 	else
 		table.insert(
 			bookingList,
-			Segment:new({
+			StatusMessage({
 				content = "📭 No bookings yet",
 				color = { fg = "#8b949e" },
-			}):wrap()
+			})
 		)
 	end
 

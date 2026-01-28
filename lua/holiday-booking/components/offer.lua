@@ -3,7 +3,8 @@
 local ui = require("ascii-ui")
 local Paragraph = ui.components.Paragraph
 local Button = ui.components.Button
-local Segment = require("ascii-ui.buffer.segment")
+local Label = require("holiday-booking.components.label")
+local Text = require("holiday-booking.components.text")
 
 --- Helper to get price color based on price range
 --- @param price number
@@ -34,28 +35,22 @@ local function OfferComponent(props)
 
 	return {
 		-- Offer card header
-		Segment:new({
-			content = "📍 " .. offer.destination,
-			color = { fg = "#87CEEB" },
-		}):wrap(),
+		Label({ content = "📍 " .. offer.destination }),
 
 		-- Dates
-		Segment:new({
+		Text({
 			content = string.format("📅 %s → %s", offer.start_date, offer.end_date),
 			color = { fg = "#DDA0DD" },
-		}):wrap(),
+		}),
 
 		-- Price with color
-		Segment:new({
+		Text({
 			content = string.format("💰 €%d", offer.price),
 			color = { fg = getPriceColor(offer.price) },
-		}):wrap(),
+		}),
 
 		-- Description
-		Segment:new({
-			content = "  " .. offer.description,
-			color = { fg = "#E0E0E0" },
-		}):wrap(),
+		Text({ content = "  " .. offer.description }),
 
 		-- Reserve button
 		Button({

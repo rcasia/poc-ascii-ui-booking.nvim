@@ -3,7 +3,8 @@
 local ui = require("ascii-ui")
 local Paragraph = ui.components.Paragraph
 local Offer = require("holiday-booking.components.offer")
-local Segment = require("ascii-ui.buffer.segment")
+local StatusMessage = require("holiday-booking.components.status_message")
+local Header = require("holiday-booking.components.header")
 
 --- Offer list component function
 --- @param props { offers: table[], isSearching: boolean, onSelect: fun(offer: table) }
@@ -18,10 +19,7 @@ local function OfferListComponent(props)
 	if isSearching then
 		table.insert(
 			offersList,
-			Segment:new({
-				content = "🔍 Searching offers...",
-				color = { fg = "#4ECDC4" },
-			}):wrap()
+			StatusMessage({ content = "🔍 Searching offers..." })
 		)
 		return offersList
 	end
@@ -29,10 +27,9 @@ local function OfferListComponent(props)
 	if #offers > 0 then
 		table.insert(
 			offersList,
-			Segment:new({
+			Header({
 				content = string.format("✨ %d Offers Found ✨", #offers),
-				color = { fg = "#FFD700" },
-			}):wrap()
+			})
 		)
 		table.insert(offersList, Paragraph({ content = "" }))
 

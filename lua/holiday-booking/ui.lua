@@ -6,8 +6,10 @@ local ui = require("ascii-ui")
 local Paragraph = ui.components.Paragraph
 local Button = ui.components.Button
 local useState = ui.hooks.useState
-local Segment = require("ascii-ui.buffer.segment")
-local interaction_type = require("ascii-ui.interaction_type")
+local Separator = require("holiday-booking.components.separator")
+local Header = require("holiday-booking.components.header")
+local Label = require("holiday-booking.components.label")
+local InputField = require("holiday-booking.components.input_field")
 
 local booking = require("holiday-booking.booking")
 local BookingList = require("holiday-booking.components.booking_list")
@@ -44,57 +46,35 @@ local function HolidayBookingApp()
 	-- Sort offers based on current sort order
 	local sortedOffers = #searchResults > 0 and OfferSort.sortOffers(searchResults, sortOrder) or searchResults
 
-	-- Helper function to create an input field using Segment
+	-- Helper function to create an input field
 	local function createInputField(value, placeholder)
-		local displayValue = value ~= "" and value or placeholder or ""
-		return Segment:new({
-			content = displayValue,
-			is_focusable = true,
-			color = { fg = "#FFD700", bg = "#1a1a1a" },
-			interactions = {
-				[interaction_type.ON_INPUT] = function()
-					-- TODO: Capture edited text from buffer
-					-- For now, this allows editing but doesn't update state
-				end,
-			},
-		}):wrap()
+		return InputField({
+			value = value,
+			placeholder = placeholder,
+			onInput = function()
+				-- TODO: Capture edited text from buffer
+				-- For now, this allows editing but doesn't update state
+			end,
+		})
 	end
 
 	return {
 		-- Header
-		Segment:new({
-			content = "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
-			color = { fg = "#4ECDC4" },
-		}):wrap(),
-		Segment:new({
-			content = "  ✈️  HOLIDAY BOOKING  ✈️",
-			color = { fg = "#FFD700" },
-		}):wrap(),
-		Segment:new({
-			content = "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
-			color = { fg = "#4ECDC4" },
-		}):wrap(),
+		Separator(),
+		Header({ content = "  ✈️  HOLIDAY BOOKING  ✈️" }),
+		Separator(),
 		Paragraph({ content = "" }),
 
 		-- Form fields
-		Segment:new({
-			content = "📅 Start date (YYYY-MM-DD):",
-			color = { fg = "#87CEEB" },
-		}):wrap(),
+		Label({ content = "📅 Start date (YYYY-MM-DD):" }),
 		createInputField(startDate, "2025-06-01"),
 		Paragraph({ content = "" }),
 
-		Segment:new({
-			content = "📅 End date (YYYY-MM-DD):",
-			color = { fg = "#87CEEB" },
-		}):wrap(),
+		Label({ content = "📅 End date (YYYY-MM-DD):" }),
 		createInputField(endDate, "2025-06-15"),
 		Paragraph({ content = "" }),
 
-		Segment:new({
-			content = "🔍 Description/Destination (optional):",
-			color = { fg = "#87CEEB" },
-		}):wrap(),
+		Label({ content = "🔍 Description/Destination (optional):" }),
 		createInputField(description, "Search destination..."),
 		Paragraph({ content = "" }),
 

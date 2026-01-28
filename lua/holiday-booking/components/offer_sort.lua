@@ -2,7 +2,7 @@
 --- @class holiday-booking.components.OfferSort
 local ui = require("ascii-ui")
 local Button = ui.components.Button
-local Segment = require("ascii-ui.buffer.segment")
+local Label = require("holiday-booking.components.label")
 
 --- Sort options
 local SORT_OPTIONS = {
@@ -41,10 +41,7 @@ local function OfferSortComponent(props)
 	end
 
 	return {
-		Segment:new({
-			content = "🔀 Sort:",
-			color = { fg = "#87CEEB" },
-		}):wrap(),
+		Label({ content = "🔀 Sort:" }),
 		Button({
 			label = "[ " .. sortOrder .. " ]",
 			on_press = handleSortClick,
